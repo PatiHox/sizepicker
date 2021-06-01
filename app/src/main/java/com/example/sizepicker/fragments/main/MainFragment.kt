@@ -58,7 +58,8 @@ class MainFragment : Fragment() {
 
         // ClothingTypeViewModel
         clothingTypeViewModel.getAll.observe(viewLifecycleOwner) { allClothingTypes ->
-            binding.rvClothingTypes.adapter = ClothingTypeAdapter(allClothingTypes as MutableList<ClothingType>)
+            binding.rvClothingTypes.adapter =
+                ClothingTypeAdapter(allClothingTypes as MutableList<ClothingType>, findNavController())
             binding.rvClothingTypes.layoutManager = LinearLayoutManager(context)
         }
     }

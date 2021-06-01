@@ -1,28 +1,17 @@
 package com.example.sizepicker.fragments.main.recycler_view
 
-import android.text.Editable
-import android.text.InputType
-import android.util.Log
-import android.util.TypedValue
-import android.view.LayoutInflater
-import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.PopupMenu
+import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sizepicker.data.entities.ClothingType
 import com.example.sizepicker.databinding.ClothingTypeItemBinding
-import java.text.DecimalFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlin.properties.Delegates
 
 
-class ClothingTypeViewHolder(val binding: ClothingTypeItemBinding) :
+class ClothingTypeViewHolder(private val binding: ClothingTypeItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
-    lateinit var parentAdapter: ClothingTypeAdapter
-    var positionInAdapter by Delegates.notNull<Int>()
-    lateinit var boundClothingType: ClothingType
+    private lateinit var parentAdapter: ClothingTypeAdapter
+    private var positionInAdapter by Delegates.notNull<Int>()
+    private lateinit var boundClothingType: ClothingType
 
     fun bind(adapter: ClothingTypeAdapter, position: Int) {
         parentAdapter = adapter
@@ -33,13 +22,18 @@ class ClothingTypeViewHolder(val binding: ClothingTypeItemBinding) :
     }
 
     private fun onBind() {
-        val context = binding.root.context
+//        val context = binding.root.context
 
         binding.tvClothingTitle.text = boundClothingType.name
 
-        // bMore
+        // ibOpen
         binding.ibOpen.setOnClickListener {
-
+            val bundle = Bundle(1)
+            bundle.putParcelable(
+                "clothingType",
+                boundClothingType
+            )
+            parentAdapter.navigateToClothingTypeFragment(bundle)
         }
     }
 
