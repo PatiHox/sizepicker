@@ -1,22 +1,22 @@
-package com.example.budgetplanning.data.repositories
+package com.example.sizepicker.data.repositories
 
 import androidx.lifecycle.LiveData
-import com.example.budgetplanning.data.daos.ClothingTypeDao
-import com.example.budgetplanning.data.entities.BalanceChange
+import com.example.sizepicker.data.daos.ClothingTypeDao
+import com.example.sizepicker.data.entities.ClothingType
 
 class ClothingTypeRepository(private val clothingTypeDao: ClothingTypeDao) {
-    val getAll: LiveData<List<BalanceChange>> = clothingTypeDao.getAll()
-    val getLast: LiveData<BalanceChange> = clothingTypeDao.getLast()
+    val getAll: LiveData<List<ClothingType>> = clothingTypeDao.getAll()
+    val getLast: LiveData<ClothingType> = clothingTypeDao.getLast()
 
-    suspend fun insertAll(vararg balanceChanges: BalanceChange) {
-        clothingTypeDao.insertAll(*balanceChanges)
+    suspend fun insertAll(vararg clothingTypes: ClothingType) {
+        clothingTypeDao.insertAll(*clothingTypes)
     }
 
-    suspend fun delete(balanceChange: BalanceChange) {
-        clothingTypeDao.delete(balanceChange)
+    suspend fun delete(clothingType: ClothingType) {
+        clothingTypeDao.delete(clothingType)
     }
 
-    suspend fun update(balanceChange: BalanceChange){
-        clothingTypeDao.update(balanceChange)
+    suspend fun update(clothingType: ClothingType){
+        clothingTypeDao.update(clothingType)
     }
 }

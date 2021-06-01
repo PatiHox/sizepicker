@@ -10,4 +10,11 @@
             app:showAsAction="ifRoom" />
     </group>
 
+    <group android:id="@+id/misc_group">
+        <item
+            android:id="about_menu_item"
+            app:showAsAction="never"
+            android:title="@string/about"/>
+    </group>
+
 </menu>

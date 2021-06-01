@@ -1,11 +1,22 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    signingConfigs {
+        debug {
+            storeFile file('/home/PatiHox/ExampleKeyStore/budget-planning.jks')
+            storePassword '8_zAXV#6(S'
+            keyPassword '8_zAXV#6(S'
+            keyAlias 'budget-planning-key'
+        }
+    }
 
     defaultConfig {
         applicationId "com.example.sizepicker"
@@ -48,4 +59,12 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    def room_version = "2.3.0"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
 }

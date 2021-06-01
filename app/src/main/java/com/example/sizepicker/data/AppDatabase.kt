@@ -1,20 +1,17 @@
-package com.example.budgetplanning.data
+package com.example.sizepicker.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.example.budgetplanning.R
-import com.example.budgetplanning.data.daos.ClothingTypeDao
-import com.example.budgetplanning.data.entities.BalanceChange
-import com.example.budgetplanning.utils.DateConverter
+import com.example.sizepicker.R
+import com.example.sizepicker.data.daos.ClothingTypeDao
+import com.example.sizepicker.data.entities.ClothingType
 
-@Database(entities = [Transaction::class, BalanceChange::class], version = 7, exportSchema = false)
-@TypeConverters(DateConverter::class)
+@Database(entities = [ClothingType::class], version = 2, exportSchema = false)
+//@TypeConverters(DateConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun transactionDao(): TransactionDao
-    abstract fun balanceChangeDao(): ClothingTypeDao
+    abstract fun clothingTypeDao(): ClothingTypeDao
 
     companion object {
         @Volatile

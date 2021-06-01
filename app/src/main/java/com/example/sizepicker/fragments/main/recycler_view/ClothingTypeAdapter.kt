@@ -1,19 +1,19 @@
-package com.example.budgetplanning.fragments.first.recycler_view
+package com.example.sizepicker.fragments.main.recycler_view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.budgetplanning.databinding.TransactionItemBinding
+import com.example.sizepicker.data.entities.ClothingType
+import com.example.sizepicker.databinding.ClothingTypeItemBinding
 
 
 class ClothingTypeAdapter(
-    private var transactions: MutableList<Transaction>,
-    val transactionViewModel: TransactionViewModel
+    private var clothingTypes: MutableList<ClothingType>
 ) : RecyclerView.Adapter<ClothingTypeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothingTypeViewHolder {
         return ClothingTypeViewHolder(
-            TransactionItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ClothingTypeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         )
     }
 
@@ -22,31 +22,31 @@ class ClothingTypeAdapter(
     }
 
     override fun getItemCount(): Int {
-        return transactions.size
+        return clothingTypes.size
     }
 
-    fun getItemAt(position: Int): Transaction {
-        return transactions[position]
+    fun getItemAt(position: Int): ClothingType {
+        return clothingTypes[position]
     }
 
-    fun getItems(): MutableList<Transaction> {
-        return transactions
+    fun getItems(): MutableList<ClothingType> {
+        return clothingTypes
     }
 
-    fun removeItemAt(position: Int): Transaction {
+    fun removeItemAt(position: Int): ClothingType {
 //        notifyItemRemoved(position)
         notifyDataSetChanged()
-        return transactions.removeAt(position)
+        return clothingTypes.removeAt(position)
     }
 
-    fun updateItemAt(position: Int, newTransaction: Transaction) {
-        transactions[position] = newTransaction
+    fun updateItemAt(position: Int, clothingType: ClothingType) {
+        clothingTypes[position] = clothingType
         notifyDataSetChanged()
         // notifyItemChanged(position)
     }
 
-    fun setTransactions(vararg transactions: Transaction) {
-        this.transactions = transactions.toMutableList()
+    fun setTransactions(vararg clothingTypes: ClothingType) {
+        this.clothingTypes = clothingTypes.toMutableList()
         notifyDataSetChanged()
     }
 

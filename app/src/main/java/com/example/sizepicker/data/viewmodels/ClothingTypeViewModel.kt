@@ -1,42 +1,40 @@
-package com.example.budgetplanning.data.viewmodels
+package com.example.sizepicker.data.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.example.budgetplanning.data.AppDatabase
-import com.example.budgetplanning.data.entities.BalanceChange
-import com.example.budgetplanning.data.repositories.ClothingTypeRepository
+import com.example.sizepicker.data.AppDatabase
+import com.example.sizepicker.data.entities.ClothingType
+import com.example.sizepicker.data.repositories.ClothingTypeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ClothingTypeViewModel(application: Application): AndroidViewModel(application) {
-    val getAll: LiveData<List<BalanceChange>>
-    val getLast: LiveData<BalanceChange>
+    val getAll: LiveData<List<ClothingType>>
     private val repository: ClothingTypeRepository
 
     init {
-        val balanceChangeDao = AppDatabase.getInstance(application).balanceChangeDao()
-        repository = ClothingTypeRepository(balanceChangeDao)
+        val clothingTypeDao = AppDatabase.getInstance(application).clothingTypeDao()
+        repository = ClothingTypeRepository(clothingTypeDao)
         getAll = repository.getAll
-        getLast = repository.getLast
     }
 
-    fun insertAll(vararg balanceChanges: BalanceChange){
+    fun insertAll(vararg clothingTypes: ClothingType){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.insertAll(*balanceChanges)
+            repository.insertAll(*clothingTypes)
         }
     }
 
-    fun delete(balanceChange: BalanceChange){
+    fun delete(clothingType: ClothingType){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.delete(balanceChange)
+            repository.delete(clothingType)
         }
     }
 
-    fun update(balanceChange: BalanceChange){
+    fun update(clothingType: ClothingType){
         viewModelScope.launch(Dispatchers.IO) {
-            repository.update(balanceChange)
+            repository.update(clothingType)
         }
     }
 }

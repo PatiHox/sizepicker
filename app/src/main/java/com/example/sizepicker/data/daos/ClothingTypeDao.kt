@@ -1,24 +1,23 @@
-package com.example.budgetplanning.data.daos
+package com.example.sizepicker.data.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.budgetplanning.data.entities.BalanceChange
-import com.example.budgetplanning.data.entities.ClothingType
+import com.example.sizepicker.data.entities.ClothingType
 
 @Dao
 interface ClothingTypeDao {
-    @Query("SELECT * FROM `bal_change` ORDER BY id DESC")
+    @Query("SELECT * FROM `clothing_types` ORDER BY id DESC")
     fun getAll(): LiveData<List<ClothingType>>
 
-    @Query("SELECT * FROM `bal_change` ORDER BY id DESC LIMIT 1")
+    @Query("SELECT * FROM `clothing_types` ORDER BY id DESC LIMIT 1")
     fun getLast(): LiveData<ClothingType>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(vararg balanceChanges: ClothingType)
+    suspend fun insertAll(vararg clothingTypes: ClothingType)
 
     @Delete
-    suspend fun delete(balanceChange: ClothingType)
+    suspend fun delete(clothingType: ClothingType)
 
     @Update
-    suspend fun update(balanceChange: ClothingType)
+    suspend fun update(clothingType: ClothingType)
 }

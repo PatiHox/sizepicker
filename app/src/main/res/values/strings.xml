@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">Size Picker</string>
+    <string name="dbname">sizepicker</string>
+
+    <string name="app_name">Підбір розміру</string>
     <string name="title_activity_main">MainActivity</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
+    <string name="first_fragment_label">Перелік типів одягу</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -24,6 +26,8 @@
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
 
-    <string name="settings_title">Settings</string>
+    <string name="settings_title">Налаштування</string>
+
+    <string name="about">Про автора</string>
 
 </resources>
