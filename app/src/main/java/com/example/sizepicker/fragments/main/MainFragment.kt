@@ -57,7 +57,9 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // ClothingTypeViewModel
-        clothingTypeViewModel.getAll.observe(viewLifecycleOwner) { allClothingTypes ->
+        clothingTypeViewModel.getAll.observe(viewLifecycleOwner) { /*allClothingTypes ->*/
+            val allClothingTypes = mutableListOf(ClothingType(0, "Плечові (футболки)", "Інструкція 1"),
+                ClothingType(1, "Браслети", "Інструкція 2"),)
             binding.rvClothingTypes.adapter =
                 ClothingTypeAdapter(allClothingTypes as MutableList<ClothingType>, findNavController())
             binding.rvClothingTypes.layoutManager = LinearLayoutManager(context)

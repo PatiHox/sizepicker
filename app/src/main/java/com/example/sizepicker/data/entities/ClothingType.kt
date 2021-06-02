@@ -2,9 +2,7 @@ package com.example.sizepicker.data.entities
 
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(tableName = "clothing_types")
 data class ClothingType(
@@ -38,3 +36,35 @@ data class ClothingType(
         }
     }
 }
+
+data class ClothingTypeWithBodyParts(
+    @Embedded
+    val clothingType: ClothingType,
+    @Relation(
+        parentColumn = "id",
+        entity = BodyPart::class,
+        entityColumn = "id",
+        associateBy = Junction(
+            value = ClothingTypeToBodyPart::class,
+            parentColumn = "clothingTypeId",
+            entityColumn = "bodyPartId"
+        )
+    )
+    val bodyParts: List<BodyPart>
+)
+
+data class ClothingTypeWithStandards(
+    @Embedded
+    val clothingType: ClothingType,
+    @Relation(
+        parentColumn = "id",
+        entity = Standard::class,
+        entityColumn = "id",
+        associateBy = Junction(
+            value = SizeByStandard::class,
+            parentColumn = "clothingTypeId",
+            entityColumn = "standardId"
+        )
+    )
+    val standards: List<Standard>
+)

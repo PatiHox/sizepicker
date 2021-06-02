@@ -29,5 +29,10 @@
     <string name="settings_title">Налаштування</string>
 
     <string name="about">Про автора</string>
+    <string name="about_app">Про додаток</string>
 
+    <string name="button_show_size_label">Показати розмір</string>
+
+    <string name="standard">Стандарт</string>
+    <string name="size">Розмір</string>
 </resources>
