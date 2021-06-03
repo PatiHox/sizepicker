@@ -1,7 +1,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="@string/messages_header">
+    <PreferenceCategory app:title="@string/application">
+        <CheckBoxPreference
+            android:singleLineTitle="false"
+            app:key="show_save_message"
+            app:title="@string/show_save_data_question" />
+    </PreferenceCategory>
+
+    <!--<PreferenceCategory app:title="@string/messages_header">
 
         <EditTextPreference
             app:key="signature"
@@ -36,6 +43,6 @@
         android:key="edit_text_preference_1"
         android:selectAllOnFocus="true"
         android:singleLine="true"
-        android:title="Edit text preference" />
+        android:title="Edit text preference" />-->
 
 </PreferenceScreen>

@@ -2,14 +2,16 @@
     <string name="dbname">sizepicker</string>
 
     <string name="app_name">Підбір розміру</string>
-    <string name="title_activity_main">MainActivity</string>
-    <!-- Strings used for fragments for navigation -->
+    <string name="title_activity_main">Size Picker</string>
+    <string name="application">Програма</string>
+    <string name="show_save_data_question">Відображати запит на збереження даних після обрахунку</string>
     <string name="first_fragment_label">Перелік типів одягу</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+    <string name="never_show_again">Не показувати знову</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
+
+    <string name="user_size_settings">Налаштування користувача</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -35,4 +37,8 @@
 
     <string name="standard">Стандарт</string>
     <string name="size">Розмір</string>
+
+    <string name="size_not_precise_warn">Увага! Вказаний розмір може бути не вірний, перевірте його за таблицею розмірів! (Кнопка внизу екрану)</string>
+
+    <string name="save_data_question">Зберегти вказані дані як стандартні?</string>
 </resources>

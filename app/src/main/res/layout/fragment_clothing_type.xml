@@ -1,97 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
     tools:context=".fragments.clothing_type.ClothingTypeFragment">
 
-    <View
+    <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" />
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clContent"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.7">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/llcEditFields"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:id="@+id/bShowSizes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_show_size_label"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/llcEditFields" />
-
-        <TableLayout
-            android:id="@+id/tlCalcResultTable"
-            app:layout_constraintTop_toBottomOf="@id/bShowSizes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/design_default_color_secondary"
-            android:padding="15dp">
-            <TableRow>
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/standard"/>
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/size"/>
-            </TableRow>
-
-        </TableLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-
-        <!--<TableLayout
-            android:id="@+id/tlTable"
+        <View
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+             />
 
-            <TableRow
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clContent"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.7"
+            android:paddingVertical="10dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/llcEditFields"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView android:text="Заголовок1"/>
-                <TextView android:text="Заголовок2"/>
-                <TextView android:text="Заголовок3"/>
-                <TextView android:text="Заголовок4"/>
-                <TextView android:text="Заголовок5"/>
-                <TextView android:text="Заголовок6"/>
-            </TableRow>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            &lt;!&ndash;<TableRow
+            <Button
+                android:id="@+id/bShowSizes"
                 android:layout_width="match_parent"
-                android:layout_height="40dp" />&ndash;&gt;
-        </TableLayout>-->
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="wrap_content"
+                android:text="@string/button_show_size_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llcEditFields" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" />
-</LinearLayout>
+            <TableLayout
+                android:id="@+id/tlCalcResultTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/design_default_color_secondary"
+                android:padding="15dp"
+                app:layout_constraintTop_toBottomOf="@id/bShowSizes">
+
+                <TableRow>
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:text="@string/standard"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_weight="1"
+                        android:text="@string/size"
+                        android:textStyle="bold" />
+                </TableRow>
+
+            </TableLayout>
+
+
+
+
+            <!--<TableLayout
+                android:id="@+id/tlTable"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView android:text="Заголовок1"/>
+                    <TextView android:text="Заголовок2"/>
+                    <TextView android:text="Заголовок3"/>
+                    <TextView android:text="Заголовок4"/>
+                    <TextView android:text="Заголовок5"/>
+                    <TextView android:text="Заголовок6"/>
+                </TableRow>
+
+                &lt;!&ndash;<TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp" />&ndash;&gt;
+            </TableLayout>-->
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            />
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+       android:id="@+id/fabShowInstruction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:scaleY="0.8"
+        android:scaleX="0.8"
+        android:src="@drawable/info_icon"
+        app:layout_constraintBottom_toTopOf="@+id/fabShowTable"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabShowTable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/table_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+

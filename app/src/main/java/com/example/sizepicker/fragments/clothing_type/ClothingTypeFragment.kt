@@ -1,11 +1,17 @@
 package com.example.sizepicker.fragments.clothing_type
 
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.*
+import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -119,9 +125,6 @@ class ClothingTypeFragment : Fragment() {
         Size(5, 1, 182f, 184f)
     )
 
-    private var manager: RecyclerView.LayoutManager? = null
-    private var adapter: TableAdapter? = null
-    val list = mutableListOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -249,46 +252,77 @@ class ClothingTypeFragment : Fragment() {
         }
 
 
+        // Data for RecyclerView
+
         val clothingTypeId = clothingType.id!!
 
-        val header = DataUtils.getHeaderRow(requireContext(), clothingTypeId)
-
-        for (item in header) {
-            list.add(item)
-        }
+        val tableDataList = mutableListOf<String>()
+        val tableHead = DataUtils.getHeaderRow(requireContext(), clothingTypeId)
 
         for (row in DataUtils.getRows(requireContext(), clothingTypeId)) {
             for (item in row) {
-                list.add(item)
+                tableDataList.add(item)
             }
         }
 
+        // fabShowInstruction
+        binding.fabShowInstruction.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(DataUtils.getInstructionLink(requireContext(), clothingTypeId)))
+            startActivity(browserIntent)
+        }
 
-        // RecyclerView
-        binding.rvTable.setHasFixedSize(true)
-        manager = GridLayoutManager(
-            context,
-            header.size,
-            GridLayoutManager.VERTICAL,
-            false
-        )
-        binding.rvTable.layoutManager = manager
-        adapter = TableAdapter(list, requireContext())
-        binding.rvTable.adapter = adapter
+        // fabShowTable
+        binding.fabShowTable.setOnClickListener {
+            // RecyclerView setup
+            val rvTable = RecyclerView(requireContext())
+
+            val layoutParams = RecyclerView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+
+            rvTable.layoutParams = layoutParams
+
+            rvTable.setHasFixedSize(true)
+            val manager = GridLayoutManager(
+                context,
+                tableHead.size,
+                GridLayoutManager.VERTICAL,
+                false
+            )
+            rvTable.layoutManager = manager
+            val adapter = TableAdapter(tableHead.toMutableList(), tableDataList, requireContext())
+            rvTable.adapter = adapter
+
+            // AlertDialog setup
+            val alertDialogBuilder = AlertDialog.Builder(requireContext())
+
+            alertDialogBuilder.setView(rvTable)
+
+            alertDialogBuilder.setPositiveButton(android.R.string.ok) { dialog, _ ->
+                dialog.dismiss()
+            }
+//            alertDialogBuilder.setNeutralButton(android.R.string.ok) { dialog, _ ->
+//                dialog.dismiss()
+//            }
+
+            alertDialogBuilder.show()
+        }
 
 
         // llcEditFields
-        val bodyParts = DataUtils.getBodyParts(requireContext(), clothingType.id!!)
+        val bodyParts = DataUtils.getBodyPartsNames(requireContext(), clothingType.id!!)
+        val editFields = mutableListOf<EditFieldItemBinding>()
         for (bodyPartName in bodyParts) {
             val viewBinding = EditFieldItemBinding.inflate(
                 LayoutInflater.from(context),
                 binding.llcEditFields,
                 true
             )
-
+            editFields.add(viewBinding)
             viewBinding.tvLabel.setText(bodyPartName)
-            val userBodyPartSize = PreferenceManager.getDefaultSharedPreferences(context)
-                .getFloat(bodyPartName, 0f)
+            val userBodyPartSize: Float = PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(bodyPartName, "0")!!.toFloat()
 
             viewBinding.ibEdit.setOnClickListener {
                 viewBinding.ibEdit.isVisible = false
@@ -308,6 +342,159 @@ class ClothingTypeFragment : Fragment() {
         // TableViewCalcResultTable
         binding.tlCalcResultTable.isVisible = false
 
+        // ButtonShowSizes
+        binding.bShowSizes.setOnClickListener {
+            binding.tlCalcResultTable.removeViews(1, binding.tlCalcResultTable.childCount - 1)
+
+            val rows: List<List<String>> = DataUtils.getRows(requireContext(), clothingTypeId)
+
+            // Коефіцієнт близькості
+            // Кількість коефіцієнтів відповідає кількості розмірів
+            // Кожен коефіцієнт відповідає порядково-відповідному розміру
+            val kfList = mutableListOf<Float>()
+
+            for (row in rows) {
+                var kf = 0f
+                val bodyPartsCount = DataUtils.getBodyPartsNames(requireContext(), clothingTypeId).size
+
+                for (i in 0 until bodyPartsCount) {
+                    val metricData = editFields[i].editText.text.toString().toFloat()
+
+                    val regex = Regex("^(\\d+(?:\\.\\d*)?)\\s-\\s(\\d+(?:\\.\\d*)?)")
+
+                    val (min, max) = regex.find(row[i])!!.destructured
+                    val minF = min.toFloat()
+                    val maxF = max.toFloat()
+
+                    when {
+                        (metricData in minF..maxF) -> {
+                            kf += 1
+                        }
+                        metricData < minF -> {
+                            kf += 1 / (minF - metricData + 0.5f)
+                        }
+                        metricData > maxF -> {
+                            kf += 1 / (metricData - maxF + 0.5f)
+                        }
+                    }
+                }
+
+                kfList.add(kf)
+            }
+
+            var kfMaxIndex = 0
+
+            for (i in 0 until kfList.size) {
+                val kf = kfList[i]
+                if (kf > kfList[kfMaxIndex]) {
+                    kfMaxIndex = i
+                }
+            }
+
+            for (i in bodyParts.size until tableHead.size) {
+                val tableRow = TableRow(context)
+                val tvStandard = TextView(context).also {
+                    it.text = tableHead[i]
+                    val params = TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                    )
+                    params.weight = 1f
+                    it.layoutParams = params
+                }
+                val tvValue = TextView(context).also {
+                    it.text = rows[kfMaxIndex][i]
+                    val params = TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                    )
+                    params.weight = 1f
+                    it.layoutParams = params
+                }
+                tableRow.addView(tvStandard)
+                tableRow.addView(tvValue)
+                binding.tlCalcResultTable.addView(tableRow)
+            }
+
+            if (kfList[kfMaxIndex] != DataUtils.getBodyPartsNames(requireContext(), clothingTypeId).size.toFloat()) {
+                val tableRow = TableRow(context)
+                val textView = TextView(context).also {
+                    val params: TableRow.LayoutParams = TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        TableRow.LayoutParams.WRAP_CONTENT
+                    )
+                    params.span = 2
+                    params.weight = 2f
+                    val metrics = requireContext().resources.displayMetrics
+                    val topMarginPixels: Int =
+                        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, metrics).toInt()
+                    params.topMargin = topMarginPixels
+                    it.layoutParams = params
+                    it.text = getString(R.string.size_not_precise_warn)
+                    it.setBackgroundColor(Color.RED)
+                    it.setTextColor(Color.WHITE)
+                    val typeface = Typeface.create(it.typeface, Typeface.BOLD)
+                    it.typeface = typeface
+                }
+                tableRow.addView(textView)
+                binding.tlCalcResultTable.addView(tableRow)
+            }
+
+            binding.tlCalcResultTable.isVisible = true
+
+            var b = false
+
+            for (ef in editFields) {
+                if (ef.editText.text.toString()
+                        .toFloat() != PreferenceManager.getDefaultSharedPreferences(context)
+                        .getString(ef.tvLabel.text.toString(), "-1")!!.toFloat()
+                )
+                    b = true
+            }
+
+            if (PreferenceManager.getDefaultSharedPreferences(context)
+                    .getBoolean("show_save_message", true) && b
+            ) {
+                val saveAlertDialogBuilder =
+                    AlertDialog.Builder(requireContext()).also { alertDialogBuilder ->
+                        val tvQuestion = TextView(context).also {
+                            it.text = getString(R.string.save_data_question)
+                            val params: TableRow.LayoutParams = TableRow.LayoutParams(
+                                TableRow.LayoutParams.MATCH_PARENT,
+                                TableRow.LayoutParams.WRAP_CONTENT
+                            )
+                            params.span = 2
+                            it.layoutParams = params
+                        }
+
+                        alertDialogBuilder.setPositiveButton(R.string.yes) { dialog, _ ->
+                            for (ef in editFields) {
+                                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                    .putString(
+                                        ef.tvLabel.text.toString(),
+                                        ef.editText.text.toString()
+                                    ).apply()
+                            }
+                            dialog.dismiss()
+                        }
+
+                        alertDialogBuilder.setNeutralButton(R.string.no) { dialog, _ ->
+                            dialog.cancel()
+                        }
+
+                        alertDialogBuilder.setNegativeButton(R.string.never_show_again) { dialog, _ ->
+                            PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                .putBoolean("show_save_message", false).apply()
+                            dialog.cancel()
+                        }
+
+                        alertDialogBuilder.setView(tvQuestion)
+                    }
+                saveAlertDialogBuilder.show()
+            }
+
+
+        }
 
     }
 
@@ -319,14 +506,15 @@ class ClothingTypeFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         menu.setGroupVisible(R.id.misc_group, false)
+        menu.setGroupVisible(R.id.settings_group, false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.settings_menu_item -> {
+            /*R.id.settings_menu_item -> {
                 findNavController().navigate(R.id.action_ClothingTypeFragment_to_settingsFragment)
                 true
-            }
+            }*/
             else -> {
                 super.onOptionsItemSelected(item)
             }
