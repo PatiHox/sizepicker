@@ -47,6 +47,14 @@ class MainFragment : Fragment() {
                 findNavController().navigate(R.id.action_MainFragment_to_settingsFragment)
                 true
             }
+            R.id.about_menu_item -> {
+                findNavController().navigate(R.id.action_MainFragment_to_aboutAuthorFragment)
+                true
+            }
+            R.id.about_app_menu_item -> {
+                findNavController().navigate(R.id.action_MainFragment_to_aboutAppFragment)
+                true
+            }
             else -> {
                 super.onOptionsItemSelected(item)
             }
@@ -59,8 +67,15 @@ class MainFragment : Fragment() {
         // ClothingTypeViewModel
         clothingTypeViewModel.getAll.observe(viewLifecycleOwner) { /*allClothingTypes ->*/
             val allClothingTypes = mutableListOf(ClothingType(0, "Плечові (футболки)", "Інструкція 1"),
+                ClothingType(1, "Взуття", "Інструкція 2"),
                 ClothingType(2, "Браслети", "Інструкція 3"),
-                ClothingType(1, "Взуття", "Інструкція 2"))
+                ClothingType(1, "Окуляри", "Інструкція 2"),
+                ClothingType(1, "Шапки", "Інструкція 2"),
+                ClothingType(1, "Перчатки", "Інструкція 2"),
+                ClothingType(1, "Плечові (плаття)", "Інструкція 2"),
+                ClothingType(1, "Поясні (штани)", "Інструкція 2"),
+                ClothingType(1, "Пояси", "Інструкція 2"),
+                ClothingType(1, "Шкарпетки", "Інструкція 2"))
             binding.rvClothingTypes.adapter =
                 ClothingTypeAdapter(allClothingTypes as MutableList<ClothingType>, findNavController())
             binding.rvClothingTypes.layoutManager = LinearLayoutManager(context)

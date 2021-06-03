@@ -17,7 +17,9 @@ object DataUtils {
         // 0
         R.raw.tshirt,
         // 1
-        R.raw.shoes
+        R.raw.shoes,
+        // 2
+        R.raw.bracers
     )
 
 

@@ -267,7 +267,10 @@ class ClothingTypeFragment : Fragment() {
 
         // fabShowInstruction
         binding.fabShowInstruction.setOnClickListener {
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(DataUtils.getInstructionLink(requireContext(), clothingTypeId)))
+            val browserIntent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(DataUtils.getInstructionLink(requireContext(), clothingTypeId))
+            )
             startActivity(browserIntent)
         }
 
@@ -344,156 +347,168 @@ class ClothingTypeFragment : Fragment() {
 
         // ButtonShowSizes
         binding.bShowSizes.setOnClickListener {
-            binding.tlCalcResultTable.removeViews(1, binding.tlCalcResultTable.childCount - 1)
-
-            val rows: List<List<String>> = DataUtils.getRows(requireContext(), clothingTypeId)
-
-            // Коефіцієнт близькості
-            // Кількість коефіцієнтів відповідає кількості розмірів
-            // Кожен коефіцієнт відповідає порядково-відповідному розміру
-            val kfList = mutableListOf<Float>()
-
-            for (row in rows) {
-                var kf = 0f
-                val bodyPartsCount = DataUtils.getBodyPartsNames(requireContext(), clothingTypeId).size
-
-                for (i in 0 until bodyPartsCount) {
-                    val metricData = editFields[i].editText.text.toString().toFloat()
-
-                    val regex = Regex("^(\\d+(?:\\.\\d*)?)\\s-\\s(\\d+(?:\\.\\d*)?)")
-
-                    val (min, max) = regex.find(row[i])!!.destructured
-                    val minF = min.toFloat()
-                    val maxF = max.toFloat()
-
-                    when {
-                        (metricData in minF..maxF) -> {
-                            kf += 1
-                        }
-                        metricData < minF -> {
-                            kf += 1 / (minF - metricData + 0.5f)
-                        }
-                        metricData > maxF -> {
-                            kf += 1 / (metricData - maxF + 0.5f)
-                        }
-                    }
-                }
-
-                kfList.add(kf)
-            }
-
-            var kfMaxIndex = 0
-
-            for (i in 0 until kfList.size) {
-                val kf = kfList[i]
-                if (kf > kfList[kfMaxIndex]) {
-                    kfMaxIndex = i
-                }
-            }
-
-            for (i in bodyParts.size until tableHead.size) {
-                val tableRow = TableRow(context)
-                val tvStandard = TextView(context).also {
-                    it.text = tableHead[i]
-                    val params = TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.WRAP_CONTENT
-                    )
-                    params.weight = 1f
-                    it.layoutParams = params
-                }
-                val tvValue = TextView(context).also {
-                    it.text = rows[kfMaxIndex][i]
-                    val params = TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.WRAP_CONTENT
-                    )
-                    params.weight = 1f
-                    it.layoutParams = params
-                }
-                tableRow.addView(tvStandard)
-                tableRow.addView(tvValue)
-                binding.tlCalcResultTable.addView(tableRow)
-            }
-
-            if (kfList[kfMaxIndex] != DataUtils.getBodyPartsNames(requireContext(), clothingTypeId).size.toFloat()) {
-                val tableRow = TableRow(context)
-                val textView = TextView(context).also {
-                    val params: TableRow.LayoutParams = TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        TableRow.LayoutParams.WRAP_CONTENT
-                    )
-                    params.span = 2
-                    params.weight = 2f
-                    val metrics = requireContext().resources.displayMetrics
-                    val topMarginPixels: Int =
-                        TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, metrics).toInt()
-                    params.topMargin = topMarginPixels
-                    it.layoutParams = params
-                    it.text = getString(R.string.size_not_precise_warn)
-                    it.setBackgroundColor(Color.RED)
-                    it.setTextColor(Color.WHITE)
-                    val typeface = Typeface.create(it.typeface, Typeface.BOLD)
-                    it.typeface = typeface
-                }
-                tableRow.addView(textView)
-                binding.tlCalcResultTable.addView(tableRow)
-            }
-
-            binding.tlCalcResultTable.isVisible = true
-
-            var b = false
-
+            var a = true
             for (ef in editFields) {
-                if (ef.editText.text.toString()
-                        .toFloat() != PreferenceManager.getDefaultSharedPreferences(context)
-                        .getString(ef.tvLabel.text.toString(), "-1")!!.toFloat()
-                )
-                    b = true
+                a = a && ef.editText.text.isNotEmpty()
             }
+            if (a) {
+                binding.tlCalcResultTable.removeViews(1, binding.tlCalcResultTable.childCount - 1)
 
-            if (PreferenceManager.getDefaultSharedPreferences(context)
-                    .getBoolean("show_save_message", true) && b
-            ) {
-                val saveAlertDialogBuilder =
-                    AlertDialog.Builder(requireContext()).also { alertDialogBuilder ->
-                        val tvQuestion = TextView(context).also {
-                            it.text = getString(R.string.save_data_question)
-                            val params: TableRow.LayoutParams = TableRow.LayoutParams(
-                                TableRow.LayoutParams.MATCH_PARENT,
-                                TableRow.LayoutParams.WRAP_CONTENT
-                            )
-                            params.span = 2
-                            it.layoutParams = params
-                        }
+                val rows: List<List<String>> = DataUtils.getRows(requireContext(), clothingTypeId)
 
-                        alertDialogBuilder.setPositiveButton(R.string.yes) { dialog, _ ->
-                            for (ef in editFields) {
-                                PreferenceManager.getDefaultSharedPreferences(context).edit()
-                                    .putString(
-                                        ef.tvLabel.text.toString(),
-                                        ef.editText.text.toString()
-                                    ).apply()
+                // Коефіцієнт близькості
+                // Кількість коефіцієнтів відповідає кількості розмірів
+                // Кожен коефіцієнт відповідає порядково-відповідному розміру
+                val kfList = mutableListOf<Float>()
+
+                for (row in rows) {
+                    var kf = 0f
+                    val bodyPartsCount =
+                        DataUtils.getBodyPartsNames(requireContext(), clothingTypeId).size
+
+                    for (i in 0 until bodyPartsCount) {
+                        val metricData = editFields[i].editText.text.toString().toFloat()
+
+                        val regex = Regex("^(\\d+(?:\\.\\d*)?)\\s-\\s(\\d+(?:\\.\\d*)?)")
+
+                        val (min, max) = regex.find(row[i])!!.destructured
+                        val minF = min.toFloat()
+                        val maxF = max.toFloat()
+
+                        when {
+                            (metricData in minF..maxF) -> {
+                                kf += 1
                             }
-                            dialog.dismiss()
+                            metricData < minF -> {
+                                kf += 1 / (minF - metricData + 0.5f)
+                            }
+                            metricData > maxF -> {
+                                kf += 1 / (metricData - maxF + 0.5f)
+                            }
                         }
-
-                        alertDialogBuilder.setNeutralButton(R.string.no) { dialog, _ ->
-                            dialog.cancel()
-                        }
-
-                        alertDialogBuilder.setNegativeButton(R.string.never_show_again) { dialog, _ ->
-                            PreferenceManager.getDefaultSharedPreferences(context).edit()
-                                .putBoolean("show_save_message", false).apply()
-                            dialog.cancel()
-                        }
-
-                        alertDialogBuilder.setView(tvQuestion)
                     }
-                saveAlertDialogBuilder.show()
+
+                    kfList.add(kf)
+                }
+
+                var kfMaxIndex = 0
+
+                for (i in 0 until kfList.size) {
+                    val kf = kfList[i]
+                    if (kf > kfList[kfMaxIndex]) {
+                        kfMaxIndex = i
+                    }
+                }
+
+                for (i in bodyParts.size until tableHead.size) {
+                    val tableRow = TableRow(context)
+                    val tvStandard = TextView(context).also {
+                        it.text = tableHead[i]
+                        val params = TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                        )
+                        params.weight = 1f
+                        it.layoutParams = params
+                    }
+                    val tvValue = TextView(context).also {
+                        it.text = rows[kfMaxIndex][i]
+                        val params = TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                        )
+                        params.weight = 1f
+                        it.layoutParams = params
+                    }
+                    tableRow.addView(tvStandard)
+                    tableRow.addView(tvValue)
+                    binding.tlCalcResultTable.addView(tableRow)
+                }
+
+                if (kfList[kfMaxIndex] != DataUtils.getBodyPartsNames(
+                        requireContext(),
+                        clothingTypeId
+                    ).size.toFloat()
+                ) {
+                    val tableRow = TableRow(context)
+                    val textView = TextView(context).also {
+                        val params: TableRow.LayoutParams = TableRow.LayoutParams(
+                            TableRow.LayoutParams.MATCH_PARENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
+                        )
+                        params.span = 2
+                        params.weight = 2f
+                        val metrics = requireContext().resources.displayMetrics
+                        val topMarginPixels: Int =
+                            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, metrics)
+                                .toInt()
+                        params.topMargin = topMarginPixels
+                        it.layoutParams = params
+                        it.text = getString(R.string.size_not_precise_warn)
+                        it.setBackgroundColor(Color.RED)
+                        it.setTextColor(Color.WHITE)
+                        val typeface = Typeface.create(it.typeface, Typeface.BOLD)
+                        it.typeface = typeface
+                    }
+                    tableRow.addView(textView)
+                    binding.tlCalcResultTable.addView(tableRow)
+                }
+
+                binding.tlCalcResultTable.isVisible = true
+
+                var b = false
+
+                for (ef in editFields) {
+                    if (ef.editText.text.toString()
+                            .toFloat() != PreferenceManager.getDefaultSharedPreferences(context)
+                            .getString(ef.tvLabel.text.toString(), "-1")!!.toFloat()
+                    )
+                        b = true
+                }
+
+                if (PreferenceManager.getDefaultSharedPreferences(context)
+                        .getBoolean("show_save_message", true) && b
+                ) {
+                    val saveAlertDialogBuilder =
+                        AlertDialog.Builder(requireContext()).also { alertDialogBuilder ->
+                            val tvQuestion = TextView(context).also {
+                                it.text = getString(R.string.save_data_question)
+                                val params: TableRow.LayoutParams = TableRow.LayoutParams(
+                                    TableRow.LayoutParams.MATCH_PARENT,
+                                    TableRow.LayoutParams.WRAP_CONTENT
+                                )
+                                params.span = 2
+                                it.layoutParams = params
+                            }
+
+                            alertDialogBuilder.setPositiveButton(R.string.yes) { dialog, _ ->
+                                for (ef in editFields) {
+                                    PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                        .putString(
+                                            ef.tvLabel.text.toString(),
+                                            ef.editText.text.toString()
+                                        ).apply()
+                                }
+                                dialog.dismiss()
+                            }
+
+                            alertDialogBuilder.setNeutralButton(R.string.no) { dialog, _ ->
+                                dialog.cancel()
+                            }
+
+                            alertDialogBuilder.setNegativeButton(R.string.never_show_again) { dialog, _ ->
+                                PreferenceManager.getDefaultSharedPreferences(context).edit()
+                                    .putBoolean("show_save_message", false).apply()
+                                dialog.cancel()
+                            }
+
+                            alertDialogBuilder.setView(tvQuestion)
+                        }
+                    saveAlertDialogBuilder.show()
+                }
+
+
             }
-
-
         }
 
     }
